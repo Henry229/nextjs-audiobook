@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 interface Choice {
   index: number;
@@ -9,9 +9,15 @@ interface Choice {
 
 interface ShowChoicesProps {
   choices: Choice[];
+  onGetVoice: (text: string) => void;
 }
 
-const ShowChoices: React.FC<ShowChoicesProps> = ({ choices }) => {
+const ShowChoices: React.FC<ShowChoicesProps> = ({ choices, onGetVoice }) => {
+  useEffect(() => {
+    const text = choices.map((choice) => choice.message.content).join(' ');
+    onGetVoice(text);
+  }, [choices, onGetVoice]);
+
   return (
     <>
       {choices.map((choice) => (
@@ -36,13 +42,6 @@ const ShowChoices: React.FC<ShowChoicesProps> = ({ choices }) => {
       ))}
     </>
   );
-};
-
-const parseContent = (content: string) => {
-  const splitBySpeaker = content.split(/(?<=[A-Za-z]+:)/g); // 대화자와 내용을 분리합니다.
-  return splitBySpeaker.map((part, index) => (
-    <p key={index}>{part.trim()}</p> // 각 대화자와 내용을 <p> 태그로 감쌉니다.
-  ));
 };
 
 export default ShowChoices;

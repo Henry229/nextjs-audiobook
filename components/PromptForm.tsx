@@ -7,6 +7,7 @@ interface PromptFormProps {
 
 export default function PromptForm({ onSubmit, loading }: PromptFormProps) {
   const [prompt, setPrompt] = useState('');
+
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!prompt) return;
