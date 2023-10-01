@@ -1,21 +1,39 @@
 'use client';
 
-enum Creator {
-  Me = 0,
-  GPT = 1,
-}
+import { useState, FormEvent } from 'react';
+import axios from 'axios';
 
-interface DialogProps {
-  text: string;
-  from: Creator;
-  key: number;
-}
+export default function GetChatGPT() {
+  const [input, setInput] = useState<string>('');
+  const [response, setResponse] = useState<string | null>(null);
 
-interface InputProps {
-  onSend: (input: string) => void;
-  disabled: boolean;
-}
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
 
-export default function GetDialog({ text, from }: DialogProps) {
-  return <>{from == Creator.Me}</>;
+    try {
+      console.log('///input: ', input);
+
+      const result = await axios.post('/api/genDialog', { prompt: input });
+      setResponse(result.data.text);
+    } catch (error) {
+      console.error('Error interacting with ChatGPT', error);
+      setResponse('Error interacting with ChatGPT');
+    }
+  };
+
+  return (
+    <div>
+      <form onSubmit={handleSubmit}>
+        <label>
+          Input:
+          <textarea value={input} onChange={(e) => setInput(e.target.value)} />
+        </label>
+        <button type='submit'>Submit</button>
+      </form>
+      <div>
+        <strong>Response:</strong>
+        <div>{response}</div>
+      </div>
+    </div>
+  );
 }
